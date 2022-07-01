@@ -3,8 +3,11 @@ extends Node2D
 func _ready():
 	GameManager.SetPlayer($RedBird)
 	$Camera.target_to_follow = GameManager.Player	
-	GameManager.Player.apply_central_impulse(Vector2(500, -800))
+	GameManager.Player.apply_central_impulse(Vector2(200, -800))
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	
 	GameManager.StartGame()
+	
 	
 func spawn_random_sprite():
 	var obstacles: Array = get_tree().get_nodes_in_group("SpawnSprites")			
@@ -18,9 +21,15 @@ func spawn_random_sprite():
 	add_child(new_instance)
 	
 func _process(delta):
+	if Input.is_action_just_pressed("mouse_capture"):
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		else:
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		
 	if GameManager.CurrentGameState == GameManager.GameState.Started:				
 		if Input.is_action_just_pressed("pressed"):
-			GameManager.Player.apply_central_impulse(Vector2(500, -800))
+			GameManager.Player.apply_central_impulse(Vector2(200, -800))
 
 func _on_SpawnSpriteTimer_timeout():
 	spawn_random_sprite()
