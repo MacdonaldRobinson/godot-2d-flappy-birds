@@ -3,8 +3,8 @@ extends Node2D
 func _ready():
 	GameManager.SetPlayer($RedBird)
 	$Camera.target_to_follow = GameManager.Player	
-	GameManager.Player.apply_central_impulse(Vector2(200, -800))
-	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	#GameManager.Player.apply_central_impulse(Vector2(200, -800))
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
 	GameManager.StartGame()
 	
