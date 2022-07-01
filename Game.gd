@@ -1,18 +1,24 @@
 extends Node2D
 
-var _event 
-
 func _ready():
 	GameManager.SetPlayer($RedBird)
 	$Camera.target_to_follow = GameManager.Player	
 	GameManager.Player.apply_central_impulse(Vector2(200, -800))
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
 	GameManager.StartGame()
 	
 func _input(event):
-	_event = event
+	
+	if Input.is_action_just_pressed("mouse_capture"):
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		else:
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		
+	if GameManager.CurrentGameState == GameManager.GameState.Started:	
+		if event is InputEventScreenTouch and (event as InputEventScreenTouch).pressed:
+			flap()
 	
 func spawn_random_sprite():
 	var obstacles: Array = get_tree().get_nodes_in_group("SpawnSprites")			
@@ -26,20 +32,8 @@ func spawn_random_sprite():
 	add_child(new_instance)
 	
 func flap():
-	GameManager.Player.apply_central_impulse(Vector2(100, -200))
+	GameManager.Player.apply_central_impulse(Vector2(200, -800))
 	
-func _process(delta):
-	if Input.is_action_just_pressed("mouse_capture"):
-		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		else:
-			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-		
-	if GameManager.CurrentGameState == GameManager.GameState.Started:				
-		if _event is InputEventMouseButton and (_event as InputEventMouseButton).pressed:
-			flap()
-		elif _event is InputEventScreenTouch:
-			flap()
 
 func _on_SpawnSpriteTimer_timeout():
 	spawn_random_sprite()
