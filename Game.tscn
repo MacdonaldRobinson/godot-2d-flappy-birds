@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://assets/Sky.png" type="Texture" id=1]
 [ext_resource path="res://assets/Clouds.png" type="Texture" id=2]
@@ -11,9 +11,17 @@
 [ext_resource path="res://Player.gd" type="Script" id=9]
 [ext_resource path="res://assets/Logs.png" type="Texture" id=10]
 [ext_resource path="res://assets/sound/Jump 2 - Sound effects Pack 2.mp3" type="AudioStream" id=11]
+[ext_resource path="res://Obstacle.gd" type="Script" id=12]
+[ext_resource path="res://assets/fonts/ThaleahFat.ttf" type="DynamicFontData" id=13]
+[ext_resource path="res://GameOverPopup.gd" type="Script" id=14]
+[ext_resource path="res://assets/sound/Retro Impact Punch Hurt 01.wav" type="AudioStream" id=15]
 
 [sub_resource type="RectangleShape2D" id=7]
 extents = Vector2( 1126.25, 40 )
+
+[sub_resource type="AtlasTexture" id=9]
+atlas = ExtResource( 5 )
+region = Rect2( 0, 0, 256, 256 )
 
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 5 )
@@ -33,6 +41,11 @@ region = Rect2( 256, 256, 256, 256 )
 
 [sub_resource type="SpriteFrames" id=5]
 animations = [ {
+"frames": [ SubResource( 9 ) ],
+"loop": true,
+"name": "Dead",
+"speed": 5.0
+}, {
 "frames": [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ), SubResource( 4 ) ],
 "loop": true,
 "name": "Flapping",
@@ -43,7 +56,19 @@ animations = [ {
 radius = 78.0064
 
 [sub_resource type="RectangleShape2D" id=8]
-extents = Vector2( 89, 281.5 )
+extents = Vector2( 89, 278.25 )
+
+[sub_resource type="DynamicFont" id=10]
+size = 24
+font_data = ExtResource( 13 )
+
+[sub_resource type="Theme" id=11]
+default_font = SubResource( 10 )
+Button/fonts/font = null
+
+[sub_resource type="DynamicFont" id=12]
+size = 48
+font_data = ExtResource( 13 )
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 8 )
@@ -54,22 +79,24 @@ current = true
 zoom = Vector2( 2.194, 2.329 )
 script = ExtResource( 7 )
 
-[node name="Top" type="StaticBody2D" parent="Camera"]
+[node name="Top" type="StaticBody2D" parent="Camera" groups=["Obstacle"]]
 position = Vector2( 2, -1398 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Camera/Top"]
 position = Vector2( 1125, 1352 )
 shape = SubResource( 7 )
 
-[node name="Bottom" type="StaticBody2D" parent="Camera"]
+[node name="Bottom" type="StaticBody2D" parent="Camera" groups=["Obstacle"]]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Camera/Bottom"]
 position = Vector2( 1125, 1352 )
 shape = SubResource( 7 )
 
 [node name="RedBird" type="RigidBody2D" parent="."]
-position = Vector2( 1340, 748 )
-gravity_scale = 10.0
+position = Vector2( 1289, 158 )
+gravity_scale = 20.0
+contacts_reported = 1
+contact_monitor = true
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_group_": true
@@ -77,8 +104,7 @@ __meta__ = {
 
 [node name="Animations" type="AnimatedSprite" parent="RedBird"]
 frames = SubResource( 5 )
-animation = "Flapping"
-frame = 1
+animation = "Dead"
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RedBird"]
@@ -87,6 +113,9 @@ shape = SubResource( 6 )
 
 [node name="Jump" type="AudioStreamPlayer" parent="RedBird"]
 stream = ExtResource( 11 )
+
+[node name="Impact" type="AudioStreamPlayer" parent="RedBird"]
+stream = ExtResource( 15 )
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
@@ -129,8 +158,9 @@ motion_mirroring = Vector2( 2250, 0 )
 texture = ExtResource( 4 )
 centered = false
 
-[node name="Tree" type="StaticBody2D" parent="." groups=["SpawnSprites"]]
+[node name="Tree" type="StaticBody2D" parent="." groups=["Obstacle", "SpawnSprites"]]
 position = Vector2( -514, 5 )
+script = ExtResource( 12 )
 
 [node name="Sprite" type="Sprite" parent="Tree"]
 texture = ExtResource( 10 )
@@ -138,11 +168,56 @@ region_enabled = true
 region_rect = Rect2( 0, 100, 300, 600 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Tree"]
-position = Vector2( 20, 20 )
+position = Vector2( 20, 23.25 )
 shape = SubResource( 8 )
 
 [node name="SpawnSpriteTimer" type="Timer" parent="."]
-wait_time = 5.0
+wait_time = 3.0
 autostart = true
 
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="GameOverPopup" type="Popup" parent="CanvasLayer"]
+visible = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 200.0
+margin_top = 200.0
+margin_right = -224.0
+margin_bottom = -200.0
+theme = SubResource( 11 )
+script = ExtResource( 14 )
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/GameOverPopup"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.411765 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/GameOverPopup"]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_top = -21.5
+margin_bottom = 21.5
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="CanvasLayer/GameOverPopup/VBoxContainer"]
+margin_right = 600.0
+margin_bottom = 44.0
+custom_fonts/font = SubResource( 12 )
+text = "Game Over!"
+align = 1
+
+[node name="Restart" type="Button" parent="CanvasLayer/GameOverPopup/VBoxContainer"]
+margin_left = 253.0
+margin_top = 48.0
+margin_right = 347.0
+margin_bottom = 76.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+text = "ReStart"
+
+[connection signal="EndGame" from="." to="." method="_on_Game_EndGame"]
 [connection signal="timeout" from="SpawnSpriteTimer" to="." method="_on_SpawnSpriteTimer_timeout"]
+[connection signal="pressed" from="CanvasLayer/GameOverPopup/VBoxContainer/Restart" to="CanvasLayer/GameOverPopup" method="_on_Restart_pressed"]

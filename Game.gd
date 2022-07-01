@@ -1,15 +1,16 @@
 extends Node2D
 
+onready var GameOverPopup:Popup = $CanvasLayer/GameOverPopup
+signal EndGame
+
 func _ready():
-	GameManager.SetPlayer($RedBird)
-	$Camera.target_to_follow = GameManager.Player	
-	#GameManager.Player.apply_central_impulse(Vector2(200, -800))
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	
+	GameManager.SetPlayer($RedBird)	
+	$Camera.target_to_follow = GameManager.Player		
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)	
 	GameManager.StartGame()
+	GameManager.connect("GameOver", self, "_on_GameOver")
 	
-func _input(event):
-	
+func _input(event):	
 	if Input.is_action_just_pressed("mouse_capture"):
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -19,7 +20,7 @@ func _input(event):
 	if GameManager.CurrentGameState == GameManager.GameState.Started:	
 		if event is InputEventScreenTouch and (event as InputEventScreenTouch).pressed:
 			flap()
-	
+
 func spawn_random_sprite():
 	var obstacles: Array = get_tree().get_nodes_in_group("SpawnSprites")			
 	var index = randi()%obstacles.size()
@@ -32,8 +33,12 @@ func spawn_random_sprite():
 	add_child(new_instance)
 	
 func flap():	
-	GameManager.Player.apply_central_impulse(Vector2(200, -800))
-	GameManager.Player.play_jump_sounds()
+	GameManager.Player.apply_central_impulse(Vector2(100, -1500))
+	GameManager.Player.play_jump_sound()
 
 func _on_SpawnSpriteTimer_timeout():
 	spawn_random_sprite()
+
+func _on_GameOver():
+	GameOverPopup.show()
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)	
