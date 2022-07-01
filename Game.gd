@@ -38,7 +38,7 @@ func _process(delta):
 	if GameManager.CurrentGameState == GameManager.GameState.Started:				
 		if _event is InputEventMouseButton and (_event as InputEventMouseButton).pressed:
 			flap()
-		elif _event is InputEventScreenTouch and (_event as InputEventScreenTouch).pressed:
+		elif _event is InputEventScreenTouch:
 			flap()
 
 func _on_SpawnSpriteTimer_timeout():
