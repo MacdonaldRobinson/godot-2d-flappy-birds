@@ -31,9 +31,9 @@ func spawn_random_sprite():
 
 	add_child(new_instance)
 	
-func flap():
+func flap():	
 	GameManager.Player.apply_central_impulse(Vector2(200, -800))
-	
+	GameManager.Player.play_jump_sounds()
 
 func _on_SpawnSpriteTimer_timeout():
 	spawn_random_sprite()

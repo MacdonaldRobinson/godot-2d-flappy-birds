@@ -49,5 +49,6 @@ func _ready():
 [node name="RedBird" type="AnimatedSprite"]
 frames = SubResource( 5 )
 animation = "Flapping"
+frame = 1
 playing = true
 script = SubResource( 6 )
