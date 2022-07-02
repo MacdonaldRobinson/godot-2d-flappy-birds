@@ -94,7 +94,7 @@ shape = SubResource( 7 )
 
 [node name="RedBird" type="RigidBody2D" parent="."]
 position = Vector2( 1289, 158 )
-gravity_scale = 20.0
+gravity_scale = 10.0
 contacts_reported = 1
 contact_monitor = true
 script = ExtResource( 9 )

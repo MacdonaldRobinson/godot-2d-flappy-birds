@@ -28,12 +28,17 @@ func spawn_random_sprite():
 	var new_instance: Node2D = (obstacles[index] as Node2D).duplicate()
 	new_instance.global_position = GameManager.Player.global_position
 	new_instance.global_position.x += get_viewport_rect().size.x * 5
-	new_instance.global_position.y = rand_range(0, get_viewport_rect().size.y * 2)
+	new_instance.global_position.y = rand_range(0, get_viewport_rect().size.y)
 
 	add_child(new_instance)
 	
 func flap():	
-	GameManager.Player.apply_central_impulse(Vector2(100, -1500))
+	var newVelocity:Vector2 = Vector2(200, -500)
+	
+	if GameManager.Player.linear_velocity.x > 1000:
+		newVelocity.x = 0;
+	
+	GameManager.Player.apply_central_impulse(newVelocity)
 	GameManager.Player.play_jump_sound()
 
 func _on_SpawnSpriteTimer_timeout():
